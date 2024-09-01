@@ -1,19 +1,35 @@
-import React,{useState} from "react";
 
-
+import React, { useState, useEffect } from 'react';
+import MarkdownEditor from './MarkdownEditor';
+import MarkdownPreview from './MarkdownPreview';
+import "../styles/App.css"
 
 const App = () => {
+  const [markdown, setMarkdown] = useState('');
+  const [html, setHtml] = useState('');
 
-    const [inputVal,setInputVal] = useState("");
+  useEffect(() => {
+    // Simple markdown to HTML conversion
+    const convertedHtml = markdown
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>') // Headers
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>') // Bold
+      .replace(/\*(.*)\*/gim, '<em>$1</em>') // Italics
+      .replace(/\n/gim, '<br/>') // Line breaks
+      .replace(/\n\n/gim, '<p></p>'); // Paragraphs
+    
+    setHtml(convertedHtml);
+  }, [markdown]);
 
-    return (
-        <div className="app" style={{display:"flex", justifyContent:"space-between"}}> 
-            <div style={{width:"45%",height:"90vh", backgroundColor:"teal" ,color:"black"}}><textarea className="textArea" value={inputVal} onChange={(e)=> setInputVal(e.target.value)} placeholder="write something here" /></div>
-            <div style={{ display:"flex",wordWrap: "breakWord",whiteSpace:"preWrap",overflowWrap:"breakWord",width:"450px",height:"90vh", backgroundColor:"skyblue" ,color:"black",  boxSizing: "borderBox",}}><h3>{inputVal}</h3></div>
-        </div>
-    );
+  return (
+    <div className="app">
+      <MarkdownEditor markdown={markdown} setMarkdown={setMarkdown} />
+      <MarkdownPreview html={html} />
+    </div>
+  );
 };
 
-export default App ;
+export default App;
 
 
